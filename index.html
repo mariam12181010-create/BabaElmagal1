@@ -1,0 +1,1625 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover, maximum-scale=1.0">
+    <title>FLASH</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@400;700;800&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
+    <style>
+        :root { 
+            --primary-bg: #05080f; 
+            --secondary-bg: rgba(10, 25, 50, 0.4); 
+            --accent-red: #FF0800;
+            --accent-blue: #00d2ff; 
+            --accent-green: #39ff14; 
+            --accent-yellow: #ffc300; 
+            --accent-purple: #c700ff; 
+            --text-primary: #f0f0f0; 
+            --text-secondary: #8a9bc7; 
+            --glow-red: rgba(255, 8, 0, 0.7);
+            --glow-blue: rgba(0, 210, 255, 0.8); 
+            --glow-green: rgba(57, 255, 20, 0.7); 
+            --glow-yellow: rgba(255, 195, 0, 0.8); 
+            --glow-purple: rgba(199, 0, 255, 0.7); 
+            --cell-size: min(13.5vw, 58px);
+            --red: #FF0800;
+            --card-size: clamp(2.2rem, 7.5vw, 3.8rem);
+            --card-img-size: calc(var(--card-size) - 0.5rem);
+            --label-font: clamp(0.85rem, 2.4vw, 1.05rem);
+            --top-font: clamp(0.9rem, 2.6vw, 1.15rem);
+            --grid-gap: clamp(0.1rem, 0.8vw, 0.25rem);
+            --main-color: #FF0800;
+            --accent-color: #ff3b3b;
+            --success-color: #00ff00;
+            --dark-bg: #000000;
+            --card-bg: #0a0a0a;
+            --text-color: #ffffff;
+        }
+        
+        html, body { 
+            position: fixed; 
+            overflow: hidden; 
+            width: 100%; 
+            height: 100%; 
+            user-select: none; 
+            -webkit-user-select: none; 
+            margin: 0;
+            padding: 0;
+            touch-action: pan-x pan-y;
+            -webkit-touch-callout: none;
+            -webkit-text-size-adjust: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        * {
+            -webkit-user-scalable: none;
+            -moz-user-scalable: none;
+            user-scalable: none;
+            -webkit-touch-callout: none;
+        }
+        
+        #login-page, #control-panel {
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            height: 100%;
+        }
+        
+        body { 
+            font-family: 'Almarai', sans-serif; 
+            background-color: black; 
+            background-image: url('https://i.top4top.io/p_3630bkc2j1.jpg');
+            background-size: cover; 
+            background-attachment: fixed; 
+            background-position: center;
+            color: var(--text-primary); 
+        }
+        
+        .screen { 
+            display: none; 
+            flex-direction: column; 
+            align-items: center; 
+            width: 100%; 
+            height: 100%; 
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            z-index: 998; 
+            padding: 15px; 
+            box-sizing: border-box; 
+            opacity: 0; 
+            transition: opacity 0.5s ease-in-out; 
+        }
+        
+        .screen.active { 
+            display: flex; 
+            opacity: 1; 
+        }
+        
+        #login-page {
+            background: transparent;
+            justify-content: center;
+        }
+        
+        .top-boxes-container { 
+            position: absolute; 
+            top: 15px; 
+            left: 15px; 
+            right: 15px; 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            gap: 10px; 
+            z-index: 10; 
+            font-family: "Orbitron", monospace; 
+        }
+        
+        .login-online-box, .version-box { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: auto; 
+            padding: 5px 15px; 
+            background-color: rgba(0,0,0,0.5); 
+            border-radius: 10px; 
+            font-size: 0.8rem; 
+            backdrop-filter: blur(5px); 
+            direction: ltr; 
+            gap: 8px; 
+        }
+        
+        .version-box { 
+            border: 1px solid var(--accent-red); 
+            color: var(--accent-red); 
+            box-shadow: 0 0 15px var(--glow-red);
+        }
+        
+        .login-online-box { 
+            border: 1px solid var(--accent-red);
+            color: var(--accent-red);
+            box-shadow: 0 0 15px var(--glow-red);
+        }
+        
+        .version-text { color: var(--accent-red); }
+        .version-number { color: white; }
+        .online-text { color: var(--accent-red); }
+        .online-number { 
+            color: white; 
+            text-shadow: 0 0 8px var(--glow-red); 
+            animation: pulse-red 2s infinite; 
+        }
+        
+        @keyframes pulse-red { 
+            0%, 100% { opacity: 0.7; } 
+            50% { opacity: 1; } 
+        }
+        
+        .login-content-wrapper { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%; 
+            z-index: 1; 
+        }
+        
+        .animated-logo-container { 
+            position: relative; 
+            width: 180px; 
+            height: 180px; 
+            margin-bottom: 25px; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        
+        .flicker-logo { 
+            position: absolute; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: contain; 
+            animation: slow-flicker-effect 1.5s infinite; 
+            filter: drop-shadow(0 0 25px var(--glow-red));
+        }
+        
+        @keyframes slow-flicker-effect { 
+            0%, 100% { opacity: 1; transform: scale(1); } 
+            50% { opacity: 0.3; transform: scale(0.98); } 
+        }
+        
+        .platform-selector-container { 
+            direction: ltr; 
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center; 
+            width: 100%; 
+            max-width: 380px; 
+            padding: 10px 15px; 
+            background-color: rgba(10, 25, 50, 0.6); 
+            backdrop-filter: blur(5px); 
+            border: 1px solid #00ff00;
+            border-radius: 12px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            margin-bottom: 10px !important; 
+        }
+        
+        .platform-option { 
+            display: flex; 
+            align-items: center; 
+            gap: 10px; 
+            cursor: pointer; 
+        }
+        
+        .platform-option .platform-label { 
+            font-size: 1rem; 
+            font-weight: bold; 
+            transition: color 0.3s; 
+        }
+        
+        .platform-option input[type="radio"] { 
+            display: none; 
+        }
+        
+        .platform-checkbox { 
+            width: 22px; 
+            height: 22px; 
+            border: 2px solid var(--text-secondary); 
+            border-radius: 5px; 
+            transition: all 0.3s; 
+            position: relative; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+        }
+        
+        .platform-checkbox::after { 
+            content: '✓'; 
+            position: absolute; 
+            transform: scale(0); 
+            color: white; 
+            font-size: 18px; 
+            font-weight: bold; 
+            transition: transform 0.3s; 
+        }
+        
+        input[name="platform"]:checked + .platform-checkbox { 
+            background-color: #00ff00; 
+            border-color: #00ff00; 
+            box-shadow: 0 0 10px rgba(0, 255, 0, 0.5); 
+        }
+        
+        input[name="platform"]:checked + .platform-checkbox::after { 
+            transform: scale(1); 
+        }
+        
+        .gradient-text-red { 
+            background: linear-gradient(90deg, var(--accent-red), white); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+        }
+        
+        .form-wrapper { 
+            width: 100%; 
+            max-width: 380px; 
+            border: 1px solid var(--accent-red);
+            border-radius: 16px; 
+            padding: 25px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 20px; 
+            background-color: rgba(0, 25, 50, 0.5); 
+            backdrop-filter: blur(8px); 
+            box-shadow: 0 0 30px var(--glow-red), inset 0 0 10px rgba(255, 8, 0, 0.1);
+            margin-top: 10px; 
+        }
+        
+        .input-field-pro { 
+            display: flex; 
+            align-items: center; 
+            border-radius: 10px; 
+            padding: 0; 
+            background: linear-gradient(to right, var(--accent-red), #990000);
+            transition: all 0.3s ease; 
+        }
+        
+        .input-field-pro:focus-within { 
+            box-shadow: 0 0 15px var(--glow-red);
+        }
+        
+        .input-icon-pro { 
+            flex-shrink: 0; 
+            width: 45px; 
+            height: 45px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+        }
+        
+        .input-icon-pro img { 
+            width: 24px; 
+            height: 24px; 
+            filter: brightness(0) invert(1); 
+        }
+        
+        .input-text-pro { 
+            flex: 1; 
+            background-color: #0a1932; 
+            color: white; 
+            font-size: 1rem; 
+            border-radius: 0 8px 8px 0; 
+            padding: 12px; 
+            border: none; 
+            outline: none; 
+            font-family: monospace; 
+        }
+        
+        .pro-btn { 
+            width: 180px; 
+            height: 50px; 
+            background: transparent; 
+            border: 2px solid var(--accent-red); 
+            border-radius: 12px; 
+            color: var(--accent-red); 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            box-shadow: 0 0 20px var(--glow-red), inset 0 0 15px rgba(255, 8, 0, 0.2); 
+            margin-top: 15px; 
+            text-transform: uppercase; 
+        }
+        
+        .pro-btn:hover { 
+            background: var(--accent-red); 
+            color: black; 
+            box-shadow: 0 0 35px var(--glow-red); 
+        }
+        
+        .buy-code-btn { 
+            position: fixed; 
+            bottom: 15px; 
+            left: 50%; 
+            transform: translateX(-50%); 
+            width: auto; 
+            background: none; 
+            color: var(--accent-red);
+            border: none; 
+            box-shadow: none; 
+            padding: 8px; 
+            border-radius: 0; 
+            font-size: 1.1rem; 
+            font-weight: bold; 
+            text-decoration: underline; 
+            text-align: center; 
+            z-index: 100; 
+            transition: color 0.3s ease;
+        }
+        
+        .buy-code-btn:hover { 
+            color: white; 
+            box-shadow: none; 
+            text-decoration: none;
+        }
+        
+        .swal2-popup {
+            background: #0a1932 !important;
+            border: 2px solid var(--accent-red) !important;
+            border-radius: 16px !important;
+            box-shadow: 0 0 30px var(--glow-red) !important;
+            color: white !important;
+            font-family: 'Almarai', sans-serif !important;
+        }
+        
+        .swal2-title {
+            color: var(--accent-red) !important;
+            font-weight: bold !important;
+            font-size: 1.5rem !important;
+        }
+        
+        .swal2-html-container {
+            color: white !important;
+            font-size: 1.1rem !important;
+        }
+        
+        .swal2-timer-progress-bar {
+            background: var(--accent-red) !important;
+        }
+        
+        .swal2-confirm {
+            background-color: var(--accent-red) !important;
+            color: black !important;
+            font-weight: bold !important;
+            border: none !important;
+            border-radius: 10px !important;
+        }
+        
+        /* لعبة التفاحة */
+        #control-panel {
+            font-family: "Share Tech Mono", monospace;
+            padding: 0;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 998;
+            padding: 15px;
+            box-sizing: border-box;
+            opacity: 0;
+            transition: opacity 0.5s ease-in-out;
+            background: black url("https://i.top4top.io/p_3630bkc2j1.jpg") no-repeat center center fixed;
+            background-size: cover;
+            overflow-y: auto;
+            justify-content: flex-start;
+            padding-top: 55px;
+        }
+        
+        #control-panel.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .top-info {
+            display: flex;
+            gap: 0.6rem;
+            align-items: center;
+            justify-content: center;
+            margin: 0.4rem auto;
+            flex-wrap: wrap;
+            width: 100%;
+            max-width: 95vw;
+            margin-top: 0.8rem;
+        }
+
+        .info-box {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.4rem 0.6rem;
+            border-radius: 0.5rem;
+            border: 1.5px solid #FF0800;
+            background: rgba(0,0,0,0.28);
+            color: #fff;
+            font-size: var(--top-font);
+            font-weight: 800;
+        }
+
+        .info-box .value {
+            color: #FF0800;
+            font-weight: 900;
+            direction: ltr;
+            margin-left: 0.4rem;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+            gap: var(--grid-gap);
+            justify-content: center;
+            justify-items: center;
+            align-items: center;
+            padding: 0.1rem;
+            width: 100%;
+            max-width: 95vw;
+            overflow-x: hidden;
+            margin: auto 0;
+        }
+
+        .row-label {
+            height: calc(var(--card-size) * 0.9);
+            min-width: calc(var(--card-size) * 1.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #FF0800;
+            font-size: var(--label-font);
+            font-weight: 800;
+            text-shadow: 0 0 0.1rem rgba(0,0,0,0.6);
+            background: rgba(0,0,0,0.25);
+            border-radius: 0.25rem;
+            padding: 0.1rem 0.12rem;
+            text-align: center;
+            border: 1.5px solid #FF0800;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .grid-card {
+            position: relative;
+            width: var(--card-size);
+            height: var(--card-size);
+            background: rgba(0,0,0,0.22);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 0.25rem 0.5rem rgba(0,0,0,0.35);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            overflow: hidden;
+            border: 1.5px solid #FF0800;
+        }
+
+        .grid-card img {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: var(--card-img-size);
+            height: var(--card-img-size);
+            object-fit: cover;
+            filter: drop-shadow(0 0.06rem 0.06rem rgba(0,0,0,0.5));
+            transition: all 0.3s ease;
+        }
+
+        .attempts-banner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.4rem;
+        }
+
+        .bottom-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            margin-top: auto;
+            padding-bottom: max(0.8rem, 2.5vh);
+        }
+
+        .controls {
+            position: relative;
+            bottom: 1rem;
+        }
+
+        .start-btn {
+            padding: 0.8rem 1.6rem;
+            background: linear-gradient(135deg, #FF0800, #cc0000);
+            color: #fff;
+            font-size: 1.1rem;
+            font-weight: 800;
+            border: none;
+            border-radius: 0.75rem;
+            box-shadow: 0 0.4rem 0.9rem rgba(0, 0, 0, 0.25);
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 6rem;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            letter-spacing: 0.5px;
+        }
+
+        .start-btn:hover {
+            background: linear-gradient(135deg, #cc0000, #990000);
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 0.6rem 1.2rem rgba(0, 0, 0, 0.35);
+        }
+
+        .start-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 0.2rem 0.6rem rgba(0, 0, 0, 0.2);
+        }
+
+        .start-btn:disabled {
+            background: rgba(255,8,0,0.45);
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        .btn-label {
+            display: inline-block;
+            line-height: 1;
+            font-size: var(--button-font);
+            color: white;
+        }
+
+        .btn-spinner {
+            display: none;
+            width: 1.1em;
+            height: 1.1em;
+            margin-inline-start: 0.5rem;
+        }
+
+        .btn-spinner svg {
+            width: 100%;
+            height: 100%;
+            animation: spin 1s linear infinite;
+            color: white;
+        }
+
+        .btn-check {
+            display: none;
+            width: 1.1em;
+            height: 1.1em;
+            margin-inline-start: 0.5rem;
+            transform: scale(0);
+            transition: transform 200ms cubic-bezier(.2,.8,.2,1), opacity 160ms ease;
+            opacity: 0;
+        }
+
+        .btn-check svg {
+            color: #8fffb0;
+        }
+
+        .start-btn.loading .btn-spinner {
+            display: inline-block;
+        }
+
+        .start-btn.show-check .btn-check {
+            display: inline-block;
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .start-btn.show-check .btn-spinner {
+            display: none;
+        }
+
+        /* Animated button press */
+        .start-btn.pressing {
+            animation: buttonPress 0.2s ease-out forwards;
+        }
+
+        @keyframes buttonPress {
+            0% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(0.85);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(0.9);
+                opacity: 0.5;
+            }
+        }
+
+        /* Animation for apple flipping */
+        .apple-flipping {
+            animation: flipApple 0.3s ease-out;
+        }
+
+        @keyframes flipApple {
+            0% {
+                transform: translate(-50%, -50%) rotateY(0deg) scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: translate(-50%, -50%) rotateY(90deg) scale(0.5);
+                opacity: 0.3;
+            }
+            100% {
+                transform: translate(-50%, -50%) rotateY(0deg) scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* Bottom to Top Animation */
+        .flip-from-bottom {
+            animation: flipFromBottom 0.5s ease-out forwards;
+        }
+
+        @keyframes flipFromBottom {
+            0% {
+                transform: translateY(100%) rotateX(90deg);
+                opacity: 0;
+            }
+            50% {
+                transform: translateY(50%) rotateX(45deg);
+                opacity: 0.5;
+            }
+            100% {
+                transform: translateY(0) rotateX(0deg);
+                opacity: 1;
+            }
+        }
+
+        /* Loading overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-text {
+            color: #FF0800;
+            font-size: 1.5rem;
+            font-weight: bold;
+            text-shadow: 0 0 10px rgba(255, 8, 0, 0.5);
+        }
+
+        /* Grid styling improvements */
+        .grid-card.apple-good {
+            border-color: #00ff00;
+            box-shadow: 0 0 15px rgba(0, 255, 0, 0.3);
+        }
+
+        .grid-card.apple-bad {
+            border-color: #FF0800;
+            box-shadow: 0 0 15px rgba(255, 8, 0, 0.3);
+        }
+
+        /* تحسينات للشاشات الصغيرة */
+        @media (max-width: 360px) {
+            :root {
+                --card-size: clamp(2.2rem, 6vw, 3rem);
+                --label-font: clamp(0.7rem, 2.2vw, 0.9rem);
+                --top-font: clamp(0.8rem, 2.4vw, 1rem);
+            }
+
+            .top-info {
+                gap: 0.3rem;
+            }
+
+            .info-box {
+                padding: 0.3rem 0.5rem;
+            }
+
+            .grid-container {
+                grid-template-columns: repeat(5, minmax(0, 1fr)) auto;
+            }
+
+            .bottom-container {
+                padding-bottom: max(0.6rem, 2vh);
+            }
+
+            .start-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .top-boxes-container {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+            }
+            
+            .animated-logo-container {
+                width: 150px;
+                height: 150px;
+            }
+            
+            .platform-selector-container {
+                flex-direction: column;
+                gap: 8px;
+                padding: 8px;
+            }
+            
+            .form-wrapper {
+                padding: 20px;
+            }
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;">
+
+    <div id="app-container">
+        <!-- شاشة تسجيل الدخول -->
+        <div id="login-page" class="screen active">
+            <!-- شريط المعلومات العلوي -->
+            <div class="top-boxes-container">
+                <div class="version-box">
+                    <span class="version-text">Version</span> 
+                    <span class="version-number">1.0.0</span>
+                </div>
+                <div class="login-online-box">
+                    <span class="online-text">Users Online:</span> 
+                    <span id="loginUserCount" class="online-number">1337</span>
+                </div>
+            </div>
+            
+            <!-- محتوى تسجيل الدخول -->
+            <div class="login-content-wrapper">
+                <!-- اللوجو المتحرك -->
+                <div class="animated-logo-container">
+                    <img src="https://l.top4top.io/p_3683txwgp1.jpg" class="flicker-logo" alt="BabaElmagal Logo">
+                </div>
+                
+                <!-- اختيار المنصة -->
+                <div class="platform-selector-container">
+                    <label class="platform-option" for="platform-BabaElmagal">
+                        <input type="radio" id="platform-BabaElmagal" name="platform" value="BabaElmagal" checked>
+                        <div class="platform-checkbox"></div>
+                        <span class="platform-label" style="color: #00ff00;">BabaElmagal SERVER</span>
+                    </label>
+                </div>
+                
+                <!-- نموذج تسجيل الدخول -->
+                <form id="loginForm" class="w-full max-w-md flex flex-col items-center">
+                    <div class="form-wrapper">
+                        <div class="input-field-pro">
+                            <div class="input-icon-pro">
+                                <img src="https://i.postimg.cc/qBLwY4fz/ic-timer-auto-black.png" alt="ID">
+                            </div>
+                            <input class="input-text-pro" id="loginId" type="text" placeholder="You'r ID Account ?" required oninput="validateID(this)">
+                        </div>
+                        <div class="input-field-pro">
+                            <div class="input-icon-pro">
+                                <img src="https://i.postimg.cc/P5B0xT5d/ic-vpn-key-black.png" alt="Key">
+                            </div>
+                            <input class="input-text-pro" id="activationCode" type="password" placeholder="Activation Code ?" required>
+                        </div>
+                    </div>
+                    <button type="button" class="pro-btn" onclick="handleLogin()">تسجيل الدخول</button>
+                </form>
+            </div>
+            
+            <!-- روابط القنوات (تم تحديث الروابط) -->
+            <div style="position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%); text-align: center; width: 100%;">
+                <div style="display: flex; flex-direction: column; gap: 5px; align-items: center;">
+                    <a href="https://t.me/XR8833" target="_blank" style="color: #FF0800; text-decoration: none; font-size: 0.9rem;">المطور</a>
+                    <a href="https://t.me/BabaElmagal1060" target="_blank" style="color: #00ff00; text-decoration: none; font-size: 0.9rem;">قناة BabaElmagal</a>
+                    <a href="https://t.me/BabaElmagal1060" target="_blank" style="color: #ffc300; text-decoration: none; font-size: 0.9rem;">قناة BabaElmagal</a>
+                </div>
+            </div>
+        </div>
+        
+        <!-- شاشة لوحة التحكم (لعبة التفاحة) -->
+        <div id="control-panel" class="screen">
+            <div class="top-info">
+                <div class="info-box">
+                    <i class="fas fa-user-astronaut" style="font-size:0.95em;color:#FF0800"></i>
+                    <span>Player ID</span>
+                    <span id="display-id" class="value"></span>
+                </div>
+                <div class="info-box" style="border-color:#FF0800;">
+                    <i class="fas fa-user" style="font-size:0.95em;color:#FF0800"></i>
+                    <span>Users Online</span>
+                    <span id="gameUserCount" class="value" style="color:#FF0800">1193</span>
+                </div>
+                <div class="info-box" style="border-color:#00ff00;">
+                    <i class="fas fa-fire" style="font-size:0.95em;color:#00ff00"></i>
+                    <span>Guess Number</span>
+                    <span id="guess-number" class="value" style="color:#00ff00">0</span>
+                </div>
+            </div>
+
+            <section id="grid-section" class="w-full max-w-lg mx-auto flex-1" style="margin:auto 0; display: flex; flex-direction: column; justify-content: center;">
+                <div class="attempts-banner">
+                    <div style="color:#FF0800;font-weight:800;margin-inline-end:0.4rem;font-size:var(--label-font);">عدد المحاولات المتبقية:</div>
+                    <div id="attempts-count" style="background: rgba(255,255,255,0.06); color:#FF0800; padding:0.25rem 0.6rem; border-radius:0.4rem; font-weight:800; min-width:2.5rem; text-align:center;font-size:var(--label-font);">5</div>
+                </div>
+                <div class="grid-wrapper" style="justify-content: center;">
+                    <div class="grid-container" id="gameGrid"></div>
+                </div>
+            </section>
+
+            <div class="bottom-container">
+                <div class="controls">
+                    <button id="startButton" class="start-btn">
+                        <span class="btn-label">Refresh</span>
+                        <span class="btn-spinner" aria-hidden="true">
+                            <svg viewBox="0 0 50 50">
+                                <circle cx="25" cy="25" r="20" stroke-opacity="0.3" stroke="#FF0800" stroke-width="4" fill="none"></circle>
+                                <path d="M45 25a20 20 0 0 1-20 20" stroke="#FF0800" stroke-linecap="round" stroke-width="4" fill="none"></path>
+                            </svg>
+                        </span>
+                        <span class="btn-check" aria-hidden="true">
+                            <svg viewBox="0 0 24 24">
+                                <polyline points="20 6 9 17 4 12" stroke="#FF0800" stroke-width="2.5" fill="none"></polyline>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Loading Overlay -->
+        <div class="loading-overlay" id="loadingOverlay">
+            <div class="loading-text">جاري التخمين...</div>
+            <div style="width: 50px; height: 50px; border: 5px solid rgba(255, 8, 0, 0.3); border-top: 5px solid #FF0800; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+        </div>
+    </div>
+
+    <!-- ========= SCRIPT ========= -->
+    <script>
+        // العناصر الأساسية
+        const loginPage = document.getElementById('login-page');
+        const controlPanel = document.getElementById('control-panel');
+        const loginIdInput = document.getElementById('loginId');
+        const activationCodeInput = document.getElementById('activationCode');
+        const displayId = document.getElementById('display-id');
+        const gameGrid = document.getElementById('gameGrid');
+        const startButton = document.getElementById('startButton');
+        const attemptsCountSpan = document.getElementById('attempts-count');
+        const gameUserCount = document.getElementById('gameUserCount');
+        const loginUserCount = document.getElementById('loginUserCount');
+        const guessNumberSpan = document.getElementById('guess-number');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // متغيرات اللعبة
+        // تم تعديل ترتيب المضاعفات ليبدأ من الأسفل
+        const multipliers = ['349.68', '69.93', '27.92', '11.18', '6.71', '4.02', '2.41', '1.93', '1.54', '1.23'];
+        let attemptsLeft = 5;
+        let loggedInUserId = '';
+        let currentGuessNumber = 0;
+        let isProcessingGuess = false;
+        
+        // صور التفاح
+        const goodAppleImg = 'https://b.top4top.io/p_36305byzd1.jpg'; // apple
+        const badAppleImg = 'https://c.top4top.io/p_3630bvfr81.jpg'; // apple2
+        const defaultAppleImg = 'https://marwan.fun/marwan1.png';
+        
+        // تعريف الصفوف مع تعديل الترتيب ليبدأ من الأسفل
+        const rows = [
+            // row10: الصف السفلي (الأسفل) - مضاعف 349.68 (الأسفل)
+            {
+                name: 'row10',
+                imageViews: ['imageview11', 'imageview12', 'imageview13', 'imageview14', 'imageview15'],
+                multiplier: 349.68,
+                appleCount: 1,
+                displayMultiplier: '349.68'
+            },
+            // row9: مضاعف 69.93
+            {
+                name: 'row9',
+                imageViews: ['imageview7', 'imageview6', 'imageview10', 'imageview9', 'imageview8'],
+                multiplier: 69.93,
+                appleCount: 2,
+                displayMultiplier: '69.93'
+            },
+            // row8: مضاعف 27.92
+            {
+                name: 'row8',
+                imageViews: ['imageview16', 'imageview17', 'imageview18', 'imageview19', 'imageview20'],
+                multiplier: 27.92,
+                appleCount: 2,
+                displayMultiplier: '27.92'
+            },
+            // row7: مضاعف 11.18
+            {
+                name: 'row7',
+                imageViews: ['imageview21', 'imageview22', 'imageview23', 'imageview24', 'imageview25'],
+                multiplier: 11.18,
+                appleCount: 3,
+                displayMultiplier: '11.18'
+            },
+            // row6: مضاعف 6.71
+            {
+                name: 'row6',
+                imageViews: ['imageview26', 'imageview27', 'imageview28', 'imageview29', 'imageview30'],
+                multiplier: 6.71,
+                appleCount: 3,
+                displayMultiplier: '6.71'
+            },
+            // row5: مضاعف 4.02
+            {
+                name: 'row5',
+                imageViews: ['imageview31', 'imageview32', 'imageview33', 'imageview34', 'imageview35'],
+                multiplier: 4.02,
+                appleCount: 3,
+                displayMultiplier: '4.02'
+            },
+            // row4: مضاعف 2.41
+            {
+                name: 'row4',
+                imageViews: ['imageview36', 'imageview37', 'imageview38', 'imageview39', 'imageview40'],
+                multiplier: 2.41,
+                appleCount: 4,
+                displayMultiplier: '2.41'
+            },
+            // row3: مضاعف 1.93
+            {
+                name: 'row3',
+                imageViews: ['imageview51', 'imageview52', 'imageview53', 'imageview54', 'imageview55'],
+                multiplier: 1.93,
+                appleCount: 4,
+                displayMultiplier: '1.93'
+            },
+            // row2: مضاعف 1.54
+            {
+                name: 'row2',
+                imageViews: ['imageview46', 'imageview47', 'imageview48', 'imageview49', 'imageview50'],
+                multiplier: 1.54,
+                appleCount: 4,
+                displayMultiplier: '1.54'
+            },
+            // row1: الصف العلوي (الأعلى) - مضاعف 1.23 (الأعلى)
+            {
+                name: 'row1',
+                imageViews: ['imageview41', 'imageview42', 'imageview43', 'imageview44', 'imageview45'],
+                multiplier: 1.23,
+                appleCount: 4,
+                displayMultiplier: '1.23'
+            }
+        ];
+        
+        // متغيرات عداد الأونلاين المشترك
+        let currentUserCount = 1337;
+        let onlineCounterInterval;
+        
+        // تخزين المحلي للبيانات
+        let localGuessesData = [];
+
+        // 1. تهيئة التطبيق
+        document.addEventListener('DOMContentLoaded', () => {
+            // تحميل آخر قيمة وصل إليها العداد من localStorage
+            let savedUserCount = localStorage.getItem('onlineUserCount');
+            if (savedUserCount) {
+                currentUserCount = parseInt(savedUserCount);
+            } else {
+                currentUserCount = 1337;
+                localStorage.setItem('onlineUserCount', currentUserCount);
+            }
+            
+            // تحميل بيانات التخمين المحلية
+            loadLocalGuessesData();
+            
+            // تعيين القيمة في كلا المكانين
+            loginUserCount.textContent = currentUserCount;
+            gameUserCount.textContent = currentUserCount;
+            
+            // بدء عداد الأونلاين الموحد
+            startUnifiedOnlineCounter();
+            
+            // إضافة حدث اختيار المنصة
+            const platformRadios = document.querySelectorAll('input[name="platform"]');
+            platformRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        const platformName = this.value;
+                        showPlatformConnectionDialog(platformName);
+                    }
+                });
+            });
+            
+            // تهيئة اللعبة
+            createGrid();
+            
+            // تحميل آخر رقم تخمين
+            loadLastGuessNumber();
+            
+            // تعيين حدث الضغط على الزر
+            startButton.addEventListener('click', handleGuessButtonClick);
+            
+            // تحديد منصة افتراضية
+            document.getElementById('platform-flash').checked = true;
+        });
+
+        // 2. دالة عداد الأونلاين الموحد
+        function startUnifiedOnlineCounter() {
+            // إيقاف أي عداد سابق
+            if (onlineCounterInterval) {
+                clearInterval(onlineCounterInterval);
+            }
+            
+            // زيادة العدد كل 5 ثواني
+            onlineCounterInterval = setInterval(() => {
+                currentUserCount++;
+                
+                // حفظ القيمة الجديدة
+                localStorage.setItem('onlineUserCount', currentUserCount);
+                
+                // تحديث كلا العدادات
+                if (loginUserCount) {
+                    loginUserCount.textContent = currentUserCount;
+                }
+                
+                if (gameUserCount) {
+                    gameUserCount.textContent = currentUserCount;
+                }
+            }, 5000);
+        }
+
+        // 3. ديالوج الاتصال بالمنصة
+        function showPlatformConnectionDialog(platformName) {
+            Swal.fire({
+                title: 'جاري الاتصال بالسيرفر',
+                html: `⏳ <b>${platformName}</b> <br> جاري التوصيل بالخادم...`,
+                timer: 2000,
+                timerProgressBar: true,
+                showConfirmButton: false,
+                allowOutsideClick: false,
+                allowEscapeKey: false,
+                allowEnterKey: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                },
+                willClose: () => {
+                    Swal.fire({
+                        title: 'تم الاتصال بنجاح!',
+                        html: `✅ تم الاتصال بسيرفر <b>${platformName}</b> بنجاح`,
+                        icon: 'success',
+                        confirmButtonText: 'تم',
+                        confirmButtonColor: '#FF0800',
+                        background: '#0a1932',
+                        color: 'white',
+                        timer: 2000,
+                        timerProgressBar: true,
+                        showConfirmButton: true
+                    });
+                }
+            });
+        }
+
+        // 4. التحقق من ID أثناء الكتابة
+        function validateID(input) {
+            input.value = input.value.replace(/[^0-9]/g, '');
+            const userId = input.value;
+            if (userId.length === 10 && !userId.startsWith('14')) {
+                input.style.borderColor = 'red';
+                input.style.boxShadow = '0 0 10px rgba(255, 0, 0, 0.5)';
+            } else {
+                input.style.borderColor = '';
+                input.style.boxShadow = '';
+            }
+        }
+
+        // 5. نظام تسجيل الدخول
+        async function handleLogin() {
+            const userId = loginIdInput.value.trim();
+            const activationCode = activationCodeInput.value.trim();
+            const selectedPlatform = document.querySelector('input[name="platform"]:checked');
+
+            if (!selectedPlatform) {
+                Swal.fire({
+                    title: 'خطأ!',
+                    text: 'يرجى اختيار منصة أولاً',
+                    icon: 'error',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#FF0800',
+                    background: '#0a1932',
+                    color: 'white'
+                });
+                return;
+            }
+
+            if (!userId || !activationCode) {
+                Swal.fire({
+                    title: 'خطأ!',
+                    text: 'يرجى إدخال ID الحساب وكلمة المرور!',
+                    icon: 'error',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#FF0800',
+                    background: '#0a1932',
+                    color: 'white'
+                });
+                return;
+            }
+
+            // التحقق من صحة ID
+            if (!userId.startsWith('14')) {
+                Swal.fire({
+                    title: 'خطأ!',
+                    html: '🚫 عذراً، هذا الحساب غير مسجل!<br>يرجى التأكد من رقم ID الخاص بك.<br>يجب أن يبدأ ID برقم 14',
+                    icon: 'error',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#FF0800',
+                    background: '#0a1932',
+                    color: 'white'
+                });
+                return;
+            }
+
+            if (userId.length !== 10) {
+                Swal.fire({
+                    title: 'خطأ!',
+                    html: '🚫 عذراً، هذا الحساب غير مسجل!<br>يرجى التأكد من رقم ID الخاص بك.<br>يجب أن يكون ID مكون من 10 أرقام بالضبط',
+                    icon: 'error',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#FF0800',
+                    background: '#0a1932',
+                    color: 'white'
+                });
+                return;
+            }
+
+            // التحقق من كود التفعيل
+            if (activationCode.toUpperCase() !== "XR88-2008") {
+                Swal.fire({
+                    title: 'خطأ!',
+                    text: '❌ كود التفعيل غير صحيح',
+                    icon: 'error',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#FF0800',
+                    background: '#0a1932',
+                    color: 'white'
+                });
+                return;
+            }
+
+            // تسجيل الدخول الناجح
+            Swal.fire({
+                title: 'تم الدخول بنجاح!',
+                html: '🎉 مرحباً بك في النظام',
+                icon: 'success',
+                confirmButtonText: 'تم',
+                confirmButtonColor: '#FF0800',
+                background: '#0a1932',
+                color: 'white',
+                timer: 1500,
+                timerProgressBar: true,
+                showConfirmButton: false
+            });
+
+            // حفظ ID محلياً
+            loggedInUserId = userId;
+            localStorage.setItem('loggedInUserId', userId);
+            
+            // إعداد اللعبة
+            displayId.textContent = loggedInUserId;
+            attemptsCountSpan.textContent = attemptsLeft;
+            
+            // الانتقال للوحة التحكم
+            setTimeout(() => {
+                loginPage.classList.remove('active');
+                controlPanel.classList.add('active');
+                
+                setTimeout(() => {
+                    loginPage.style.display = 'none';
+                }, 500);
+            }, 1500);
+        }
+
+        // 6. تحميل بيانات التخمين المحلية
+        function loadLocalGuessesData() {
+            const savedData = localStorage.getItem('localGuessesData');
+            if (savedData) {
+                localGuessesData = JSON.parse(savedData);
+            } else {
+                localGuessesData = [];
+            }
+        }
+
+        // 7. تحميل آخر رقم تخمين من التخزين المحلي
+        function loadLastGuessNumber() {
+            if (localGuessesData.length > 0) {
+                // العثور على أعلى رقم تخمين
+                let maxNumber = 0;
+                localGuessesData.forEach(guess => {
+                    if (guess.guessNumber > maxNumber) {
+                        maxNumber = guess.guessNumber;
+                    }
+                });
+                currentGuessNumber = maxNumber;
+            } else {
+                currentGuessNumber = 0;
+            }
+            guessNumberSpan.textContent = currentGuessNumber;
+        }
+
+        // 8. إنشاء الشبكة مع وضع الأرقام على اليسار
+        function createGrid() {
+            gameGrid.innerHTML = '';
+            
+            // بناء الشبكة من الأسفل للأعلى (كما في rows array)
+            for (let rowIndex = 0; rowIndex < 10; rowIndex++) {
+                // إضافة الخلايا أولاً (5 خلايا)
+                for (let col = 0; col < 5; col++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('grid-card');
+                    cell.dataset.rowIndex = rowIndex;
+                    cell.dataset.colIndex = col;
+                    
+                    const img = document.createElement('img');
+                    img.src = defaultAppleImg;
+                    img.alt = `Cell ${rowIndex}-${col}`;
+                    cell.appendChild(img);
+                    gameGrid.appendChild(cell);
+                }
+                
+                // إضافة التسمية (المضاعف) في النهاية (على اليسار)
+                const label = document.createElement('div');
+                label.classList.add('row-label');
+                // استخدام المضاعفات من الأسفل إلى الأعلى
+                label.textContent = multipliers[rowIndex];
+                label.dataset.rowIndex = rowIndex;
+                gameGrid.appendChild(label);
+            }
+        }
+
+        // 9. حدث زر التخمين
+        async function handleGuessButtonClick() {
+            if (isProcessingGuess) return;
+            
+            if (attemptsLeft <= 0) {
+                logout();
+                return;
+            }
+
+            if (!navigator.onLine) {
+                Swal.fire({
+                    title: 'خطأ في الاتصال',
+                    text: 'يرجى الاتصال بالإنترنت أولاً',
+                    icon: 'error',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#FF0800',
+                    background: '#0a1932',
+                    color: 'white'
+                });
+                return;
+            }
+
+            // محاكاة اتصال بالسيرفر أولاً
+            await simulateServerConnection();
+
+            // 1. أنيميشن زر الضغط وتعطيله
+            isProcessingGuess = true;
+            startButton.classList.add('pressing');
+            startButton.disabled = true;
+            startButton.style.cursor = 'not-allowed';
+
+            setTimeout(() => {
+                // 2. إظهار شاشة التحميل
+                loadingOverlay.style.display = 'flex';
+                
+                // 3. بدء عملية التخمين
+                attemptsLeft--;
+                attemptsCountSpan.textContent = attemptsLeft;
+                
+                // 4. الحصول على رقم تخمين جديد
+                const nextGuessNumber = currentGuessNumber + 1;
+                
+                // 5. إنشاء كود عشوائي
+                const randomCode = 10000 + Math.floor(Math.random() * 90000);
+                
+                // 6. بدء عملية الأنيميشن والتخزين
+                startGuessAnimation(randomCode, nextGuessNumber);
+            }, 200);
+        }
+
+        // 10. محاكاة اتصال بالسيرفر
+        async function simulateServerConnection() {
+            return new Promise((resolve) => {
+                // إظهار رسالة اتصال بالسيرفر
+                Swal.fire({
+                    title: 'جاري الاتصال بالسيرفر',
+                    html: '⏳ جاري التوصيل بخادم قاعدة البيانات...',
+                    timer: 1500,
+                    timerProgressBar: true,
+                    showConfirmButton: false,
+                    allowOutsideClick: false,
+                    allowEscapeKey: false,
+                    allowEnterKey: false,
+                    didOpen: () => {
+                        Swal.showLoading();
+                    },
+                    willClose: () => {
+                        Swal.fire({
+                            title: 'تم الاتصال بنجاح!',
+                            html: '✅ تم الاتصال بالخادم بنجاح',
+                            icon: 'success',
+                            confirmButtonText: 'تم',
+                            confirmButtonColor: '#FF0800',
+                            background: '#0a1932',
+                            color: 'white',
+                            timer: 1000,
+                            timerProgressBar: true,
+                            showConfirmButton: false
+                        }).then(() => {
+                            resolve();
+                        });
+                    }
+                });
+            });
+        }
+
+        // 11. بدء أنيميشن التخمين من الأسفل للأعلى
+        function startGuessAnimation(randomCode, guessNumber) {
+            let allRowsData = {};
+            let completedRows = 0;
+            let totalAnimationTime = 0;
+            
+            // التخمين من الأسفل للأعلى (من row1 في rows array إلى row10)
+            // rows array مرتبة من الأسفل (row10) إلى الأعلى (row1)
+            // نبدأ من الأعلى في الصفوف المرئية (الأعلى في الشاشة)
+            for (let rowIndex = 9; rowIndex >= 0; rowIndex--) {
+                const row = rows[rowIndex];
+                
+                setTimeout(() => {
+                    const applesNeeded = row.appleCount;
+                    
+                    // اختيار مواقع عشوائية للتفاح
+                    const applePositions = [];
+                    while (applePositions.length < applesNeeded) {
+                        const pos = Math.floor(Math.random() * 5);
+                        if (!applePositions.includes(pos)) {
+                            applePositions.push(pos);
+                        }
+                    }
+                    
+                    // أنيميشن لكل خلية في الصف
+                    for (let colIndex = 0; colIndex < 5; colIndex++) {
+                        setTimeout(() => {
+                            const isApple = applePositions.includes(colIndex);
+                            // حساب موقع الخلية في الشبكة المرئية
+                            // كل صف له 6 عناصر: 5 خلايا + 1 تسمية
+                            const cellIndex = (rowIndex * 6) + colIndex;
+                            const cell = gameGrid.children[cellIndex];
+                            
+                            if (cell) {
+                                const img = cell.querySelector('img');
+                                
+                                // أنيميشن: من الأسفل للأعلى
+                                cell.classList.add('flip-from-bottom');
+                                
+                                // تغيير الصورة بعد تأخير قصير
+                                setTimeout(() => {
+                                    img.src = isApple ? goodAppleImg : badAppleImg;
+                                    
+                                    // إضافة كلاس للتفاح
+                                    cell.classList.remove('apple-good', 'apple-bad');
+                                    if (isApple) {
+                                        cell.classList.add('apple-good');
+                                    } else {
+                                        cell.classList.add('apple-bad');
+                                    }
+                                    
+                                    img.classList.add('apple-flipping');
+                                    
+                                    // تخزين اسم الـ imageview والقيمة
+                                    const imageViewName = row.imageViews[colIndex];
+                                    if (!allRowsData[row.name]) {
+                                        allRowsData[row.name] = {};
+                                    }
+                                    allRowsData[row.name][imageViewName] = isApple ? 1 : 0;
+                                    
+                                    // إزالة الأنيميشن بعد اكتمالها
+                                    setTimeout(() => {
+                                        img.classList.remove('apple-flipping');
+                                    }, 300);
+                                    
+                                    // عند اكتمال آخر عمود في الصف
+                                    if (colIndex === 4) {
+                                        // إضافة المضاعف للصف
+                                        allRowsData[row.name].multiplier = row.multiplier;
+                                        completedRows++;
+                                        
+                                        // عند اكتمال جميع الصفوف
+                                        if (completedRows === 10) {
+                                            // إعداد البيانات النهائية
+                                            const finalData = {
+                                                guessNumber: guessNumber,
+                                                random_code: randomCode,
+                                                timestamp: Date.now(),
+                                                user_id: loggedInUserId,
+                                                data: allRowsData
+                                            };
+                                            
+                                            // حفظ البيانات محلياً
+                                            saveGuessLocally(finalData, guessNumber);
+                                        }
+                                    }
+                                }, 100);
+                            }
+                        }, colIndex * 50); // تأخير بين الأعمدة
+                    }
+                }, totalAnimationTime);
+                
+                totalAnimationTime += 300; // تأخير بين الصفوف
+            }
+            
+            // إزالة أنيميشن من الأسفل بعد انتهائها
+            setTimeout(() => {
+                const cells = document.querySelectorAll('.grid-card');
+                cells.forEach(cell => {
+                    cell.classList.remove('flip-from-bottom');
+                });
+            }, totalAnimationTime + 1000);
+            
+            // ضمان إخفاء شاشة التحميل بعد وقت معين
+            setTimeout(() => {
+                if (completedRows < 10) {
+                    loadingOverlay.style.display = 'none';
+                    resetButtonState();
+                }
+            }, totalAnimationTime + 2000);
+        }
+
+        // 12. حفظ التخمين محلياً
+        function saveGuessLocally(guessData, guessNumber) {
+            // محاكاة اتصال بقاعدة البيانات
+            simulateDatabaseSave().then(() => {
+                // إضافة البيانات للذاكرة المحلية
+                localGuessesData.push(guessData);
+                
+                // حفظ في localStorage
+                localStorage.setItem('localGuessesData', JSON.stringify(localGuessesData));
+                
+                // تحديث رقم التخمين
+                currentGuessNumber = guessNumber;
+                guessNumberSpan.textContent = currentGuessNumber;
+                
+                // إخفاء شاشة التحميل
+                loadingOverlay.style.display = 'none';
+                resetButtonState();
+                
+                // إظهار رسالة النجاح
+                Swal.fire({
+                    title: 'تم التخمين بنجاح!',
+                    html: `✅ تم تخزين التخمين رقم <b>${guessNumber}</b> في قاعدة البيانات`,
+                    icon: 'success',
+                    confirmButtonText: 'تم',
+                    confirmButtonColor: '#FF0800',
+                    background: '#0a1932',
+                    color: 'white',
+                    timer: 2000,
+                    timerProgressBar: true,
+                    showConfirmButton: false
+                });
+                
+                // التحقق من نفاذ المحاولات
+                if (attemptsLeft <= 0) {
+                    setTimeout(() => {
+                        logout();
+                    }, 3000);
+                }
+            }).catch(error => {
+                console.error('Error simulating save:', error);
+                loadingOverlay.style.display = 'none';
+                resetButtonState();
+                
+                Swal.fire({
+                    title: 'خطأ في الحفظ',
+                    text: 'حدث خطأ أثناء حفظ التخمين في قاعدة البيانات',
+                    icon: 'error',
+                    confirmButtonText: 'حسناً',
+                    confirmButtonColor: '#FF0800',
+                    background: '#0a1932',
+                    color: 'white'
+                });
+            });
+        }
+
+        // 13. محاكاة حفظ في قاعدة البيانات
+        function simulateDatabaseSave() {
+            return new Promise((resolve) => {
+                // محاكاة تأخير الشبكة
+                setTimeout(() => {
+                    // محاكاة نجاح الحفظ
+                    resolve();
+                }, 800);
+            });
+        }
+
+        // 14. إعادة تعيين حالة الزر
+        function resetButtonState() {
+            startButton.classList.remove('pressing');
+            startButton.disabled = false;
+            startButton.style.cursor = 'pointer';
+            isProcessingGuess = false;
+        }
+
+        // 15. معالجة الخطأ
+        function handleGuessError() {
+            loadingOverlay.style.display = 'none';
+            resetButtonState();
+            
+            // إعادة المحاولة
+            attemptsLeft++;
+            attemptsCountSpan.textContent = attemptsLeft;
+            
+            Swal.fire({
+                title: 'خطأ في الاتصال',
+                text: 'حدث خطأ أثناء عملية التخمين. يرجى المحاولة مرة أخرى',
+                icon: 'error',
+                confirmButtonText: 'حسناً',
+                confirmButtonColor: '#FF0800',
+                background: '#0a1932',
+                color: 'white'
+            });
+        }
+
+        // 16. تسجيل الخروج عند نفاذ المحاولات
+        function logout() {
+            Swal.fire({
+                title: 'انتهت المحاولات',
+                text: 'لقد استهلكت جميع محاولاتك. سيتم تسجيل خروجك الآن.',
+                icon: 'info',
+                confirmButtonText: 'حسناً',
+                confirmButtonColor: '#FF0800',
+                background: '#0a1932',
+                color: 'white'
+            });
+            setTimeout(() => {
+                location.reload();
+            }, 3000);
+        }
+
+        // 17. التحكم في الاتصال بالإنترنت
+        window.addEventListener('online', () => {
+            console.log('Device is online');
+        });
+
+        window.addEventListener('offline', () => {
+            Swal.fire({
+                title: 'فقدان الاتصال',
+                text: 'تم فقدان الاتصال بالإنترنت',
+                icon: 'warning',
+                confirmButtonText: 'حسناً',
+                confirmButtonColor: '#FF0800',
+                background: '#0a1932',
+                color: 'white'
+            });
+        });
+    </script>
+</body>
+</html>
